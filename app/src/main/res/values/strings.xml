@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Reversi</string>
+    <string name="player_btn">Player vs Player </string>
+    <string name="ai_btn">Player vs AI</string>
+    <string name="white_turn">White to move!</string>
+    <string name="black_turn">Black to move!</string>
+    <string name="white_score">White: 2</string>
+    <string name="black_score">Black: 2</string>
+</resources>
