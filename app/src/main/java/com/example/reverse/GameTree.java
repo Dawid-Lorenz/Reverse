@@ -6,15 +6,15 @@ import java.util.ArrayList;
 
 public class GameTree {
     public Node root;
+    public Reversi.State[][] board;
 
     public GameTree(Reversi.State[][] rootData) {
         root = new Node();
-        root.board = copyArray(rootData);
+        board = copyArray(rootData);
         root.children = new ArrayList<Node>();
-        root.depth = 0;
     }
 
-    protected Reversi.State[][] copyArray(Reversi.State[][] source)
+    private static Reversi.State[][] copyArray(Reversi.State[][] source)
     {
         Reversi.State[][] target = new Reversi.State[source.length][source[0].length];
         for (int i = 0; i < source.length; i++)
@@ -25,15 +25,14 @@ public class GameTree {
     }
 
     public static class Node {
-        public Reversi.State[][] board;
         public byte[] prevMove = new byte[2];
         public byte[] bestMove = {-1, -1};
-        private int score;
-        private byte depth;
+        public int score;
+//        private byte depth;
         protected byte childCount;
 //        private Node parent;
         private ArrayList<Node> children;
-        private int[][] weights = {{30, -3, 11, 8, 8, 11, -3, 30},
+        private static int[][] weights = {{30, -3, 11, 8, 8, 11, -3, 30},
             {-3, -7, -4, 1, 1, -4, -7, -3},
             {11, -4, 2, 2, 2, 2, -4, 11},
             {8, 1, 2, -3, -3, 2, 1, 8},
@@ -64,6 +63,16 @@ public class GameTree {
              */
         }
 
+        public Node(Node n)
+        {
+            prevMove[0] = n.prevMove[0];
+            prevMove[1] = n.prevMove[1];
+            bestMove[0] = n.bestMove[0];
+            bestMove[1] = n.bestMove[1];
+            score = n.score;
+            children = new ArrayList<>(n.children);
+        }
+
         public ArrayList<Node> getChildren()
         {
             return children;
@@ -74,7 +83,38 @@ public class GameTree {
             children.add(node);
         }
 
+        public static int staticEvaluation(boolean player, Reversi.State[][] staticBoard)
+        {
+            int staticscore = 0;
+            double whites = 0.0;
+            double blacks = 0.0;
+            int tempScore = 0;
+//            boolean isEnd = true;
+            for (int i = 0; i < 8; i++)
+                for (int j = 0; j < 8; j++) {
+                    if (staticBoard[i][j] == Reversi.State.WHITE)
+                    {
+                        whites++;
+                        tempScore += weights[i][j];
+                    }
+                    else if (staticBoard[i][j] == Reversi.State.BLACK)
+                    {
+                        blacks++;
+                        tempScore -= weights[i][j];
+                    }
+                }
 
+            if (whites + blacks == 64)
+                staticscore = (int) (whites - blacks);
+            else
+                staticscore = tempScore;
+
+            staticscore += (int) 100.0*(whites - blacks)/(whites + blacks);
+
+            return staticscore;
+        }
+
+        /*
         // ESSENTIALLY MINIMAX HERE!!!
         public int[] getScore(boolean player, int maxDepth)
         {
@@ -142,7 +182,7 @@ public class GameTree {
             return answer;
         }
 
-        // TODO finish changing to Alfa Beta pruning:
+        /*
         public int[] alphaBeta(boolean player, int maxDepth, int alpha, int beta)
         {
             int[] returned;
@@ -168,7 +208,7 @@ public class GameTree {
                     }
 
                 if (whites + blacks == 64.0) // TODO the game doesn't always end here!
-                    score = (int) (whites - blacks);
+                    score = 100 * (int) (whites - blacks);
                 else {
                     score = tempScore;
 
@@ -216,14 +256,15 @@ public class GameTree {
             int[] answer = {coords[0], coords[1], score};
             return answer;
         }
+        */
 
-        public byte getDepth()
+        public int getDepth()
         {
             if (children.isEmpty())
                 return 1;
             else
             {
-                depth = 1;
+                int depth = 1;
                 int maxDepth = 0;
                 for (int i = 0; i < children.size(); i++)
                     if (maxDepth < children.get(i).getDepth())

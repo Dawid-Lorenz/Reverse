@@ -22,7 +22,8 @@ import android.widget.Toast;
 
 public class minimax extends AppCompatActivity {
 
-    int white, black, empty, available, movesAhead;
+    int white, black, empty, available;
+    int movesAhead = 2;
     boolean playerFlag;
     Reversi.State[][] board;
 
@@ -112,12 +113,12 @@ public class minimax extends AppCompatActivity {
 
     private boolean makeMove(int prevRow, int prevCol, int rowNum, int colNum, TableRow[] rows)
     {
-        if(!engine.madeMove(playerFlag, prevRow, prevCol, movesAhead))
-            System.err.println("That move: " + prevRow + ", " + prevCol + " seemed illegal!");
-        byte[] move = engine.chooseTheBestMove(false, movesAhead);
+//        if(!engine.madeMove(playerFlag, prevRow, prevCol, movesAhead))
+//            System.err.println("That move: " + prevRow + ", " + prevCol + " seemed illegal!");
+        byte[] move = engine.chooseTheBestMove(false, board, movesAhead);
         if (move[0] == -1 && move[1] == -1)
         {
-            engine.madeMove(false, move[0], move[1], movesAhead);
+//            engine.madeMove(false, move[0], move[1], movesAhead);
             return false;
         }
         else
@@ -150,8 +151,8 @@ public class minimax extends AppCompatActivity {
 
             if (moved)
                 board[move[0]][move[1]] = Reversi.State.BLACK;
-            if(!engine.madeMove(false, move[0], move[1], movesAhead))
-                System.err.println("That move: " + move[0] + ", " + move[1] + " seemed illegal!");
+//            if(!engine.madeMove(false, move[0], move[1], movesAhead))
+//                System.err.println("That move: " + move[0] + ", " + move[1] + " seemed illegal!");
             return true;
         }
     }
