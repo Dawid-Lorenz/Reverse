@@ -198,7 +198,7 @@ public class minimax extends AppCompatActivity {
 
 
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle("How many moves ahead? (4 is optimal");
+        alert.setTitle("How many moves ahead? (8 is optimal");
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_NUMBER);
         input.setRawInputType(Configuration.KEYBOARD_12KEY);
