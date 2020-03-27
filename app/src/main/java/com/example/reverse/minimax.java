@@ -8,8 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.os.Handler;
 import android.text.InputType;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,7 +31,7 @@ public class minimax extends AppCompatActivity {
     private void updateTheBoard(boolean player, int rowNumber, int colNumber, TableRow[] rows)
     {
 
-                // change UI elements here
+            // change UI elements here
 
             board = engine.updateBoardState(player, rowNumber, colNumber, board).clone();
 
@@ -43,7 +41,7 @@ public class minimax extends AppCompatActivity {
                 {
                     ImageButton btn = (ImageButton) rows[row].getChildAt(col);
 
-                    if (board[row][col] == null) // == Reversi.State.EMPTY)
+                    if (board[row][col] == null)
                         btn.setImageResource(empty);
 
                     else if (board[row][col] == Reversi.State.WHITE)
@@ -94,7 +92,6 @@ public class minimax extends AppCompatActivity {
 
     private boolean hasPossibleMoves(boolean player, int rowNum, TableRow[] rows)
     {
-//        System.out.println("Checking for moves of " + (player ? "white" : "black"));
         boolean hasMoves = false;
 
         for (int row = 0; row < rowNum; row++)
@@ -113,12 +110,9 @@ public class minimax extends AppCompatActivity {
 
     private boolean makeMove(int prevRow, int prevCol, int rowNum, int colNum, TableRow[] rows)
     {
-//        if(!engine.madeMove(playerFlag, prevRow, prevCol, movesAhead))
-//            System.err.println("That move: " + prevRow + ", " + prevCol + " seemed illegal!");
         byte[] move = engine.chooseTheBestMove(false, board, movesAhead);
         if (move[0] == -1 && move[1] == -1)
         {
-//            engine.madeMove(false, move[0], move[1], movesAhead);
             return false;
         }
         else
@@ -132,14 +126,12 @@ public class minimax extends AppCompatActivity {
                             int currRow = move[0] + mult * dRow;
                             int currCol = move[1] + mult * dCol;
                             if (engine.isValidMove(false, rowNum, colNum, board, move[0], move[1], currRow, currCol)) {
-                                //Button current;
                                 int tempRow = currRow;
                                 int tempCol = currCol;
                                 while ((move[0] != tempRow && move[1] != tempCol)
                                         || (move[0] == currRow && move[1] != tempCol)
                                         || (move[0] != tempRow && move[1] == currCol)) {
                                     moved = true;
-//                                                        neighbours.add(current);
                                     board[tempRow][tempCol] = Reversi.State.BLACK;
                                     tempRow -= dRow;
                                     tempCol -= dCol;
@@ -151,8 +143,6 @@ public class minimax extends AppCompatActivity {
 
             if (moved)
                 board[move[0]][move[1]] = Reversi.State.BLACK;
-//            if(!engine.madeMove(false, move[0], move[1], movesAhead))
-//                System.err.println("That move: " + move[0] + ", " + move[1] + " seemed illegal!");
             return true;
         }
     }
@@ -212,8 +202,6 @@ public class minimax extends AppCompatActivity {
 
         alert.show();
 
-
-        engine.initialiseGameTree(playerFlag, board, movesAhead);
         for(int row = 0; row < rowNumber; row++){
             final int rowFin = row;
             final int colNumber = rows[row].getChildCount();
@@ -221,8 +209,6 @@ public class minimax extends AppCompatActivity {
                 final int colFin = col;
                 final ImageButton btn = (ImageButton) rows[row].getChildAt(col);
 
-
-                //TODO refactor into this:
                 btn.setOnTouchListener(new View.OnTouchListener() {
 
                 boolean moved = false;
@@ -271,21 +257,15 @@ public class minimax extends AppCompatActivity {
                                     updateTheBoard(playerFlag, rowNumber, colNumber, rows);
                                 }
                             } else {
-//                                System.out.println("Button: " + rowFin + ", " + colFin);
-//                                System.out.println("State: " + board[rowFin][colFin]);
                                 Reversi.State btnState = board[rowFin][colFin];
                                 if (
                                         btnState == Reversi.State.AV_WHITE && playerFlag ||
                                                 btnState == Reversi.State.AV_BLACK && !playerFlag)
-                                   // || btnState == Reversi.State.AV_BOTH)
                                 {
-//                                    System.out.println("Button is correct");
                                     // looping over up-down directions:
                                     for (int dRow = -1; dRow <= 1; dRow++)
                                         for (int dCol = -1; dCol <= 1; dCol++) {
                                             if (dCol != 0 || dRow != 0) {
-//                                                System.out.println("Checking...");
-                                                //LinkedList<Button> neighbours = new LinkedList<Button>();
                                                 // loop over the rows and cols multiplier:
                                                 for (int mult = 1; mult < 8; mult++) {
                                                     int currRow = rowFin + mult * dRow;
@@ -298,8 +278,6 @@ public class minimax extends AppCompatActivity {
                                                         while ((rowFin != tempRow && colFin != tempCol)
                                                                 || (rowFin == currRow && colFin != tempCol)
                                                                 || (rowFin != tempRow && colFin == currCol)) {
-                                                            //current = (Button) rows[tempRow].getChildAt(tempCol);
-//                                                        neighbours.add(current);
                                                             board[tempRow][tempCol] = color;
                                                             tempRow -= dRow;
                                                             tempCol -= dCol;
@@ -318,8 +296,6 @@ public class minimax extends AppCompatActivity {
                             if (moved)
                             {
                                 board[rowFin][colFin] = color;
-//                                System.out.println("B: Changing the player!");
-//                                playerFlag = !playerFlag;
                                 updateText(move, whiteScore, blackScore, rowNumber, rows);
                                 updateTheBoard(!playerFlag, rowNumber, colNumber, rows);
 
@@ -340,133 +316,6 @@ public class minimax extends AppCompatActivity {
 
 
                });
-
-                /*
-                btn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Reversi.State color = playerFlag ? Reversi.State.WHITE : Reversi.State.BLACK;
-                        boolean hasPossibleMoves = hasPossibleMoves(playerFlag, rowNumber, rows);
-
-                        System.out.println("On click!");
-                        System.out.println("hPm = " + hasPossibleMoves);
-
-                        if (!hasPossibleMoves)
-                        {
-//                            CharSequence message = playerFlag ? "White has no possible moves!": "Black has no possible moves!";
-                            CharSequence message = "White has no possible moves!";
-                            Toast popup = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT );
-//                            System.out.println("A: Changing the player!");
-//                            playerFlag = !playerFlag;
-                            updateText(move, whiteScore, blackScore, rowNumber, rows);
-                            updateTheBoard(!playerFlag, rowNumber, colNumber, rows);
-                            popup.show();
-                            if(!makeMove(-1, -1,rowNumber, colNumber, rows))
-                            {
-
-                                int whites = 0; int blacks = 0;
-                                for (int i = 0; i < rowNumber; i++)
-                                    for (int j = 0; j < colNumber; j++)
-                                        if (board[i][j] == Reversi.State.WHITE)
-                                            whites++;
-                                        else if (board[i][j] == Reversi.State.BLACK)
-                                            blacks++;
-
-                                if (whites > blacks)
-                                    message = "White has won!";
-                                else if (whites < blacks)
-                                    message = "Black has won!";
-                                else
-                                    message = "It's a tie!";
-
-                                new AlertDialog.Builder(minimax.this)
-                                        .setTitle("Game over")
-                                        .setMessage(message)
-                                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                // Continue with delete operation
-                                                startActivity(new Intent(minimax.this, MainActivity.class));
-                                            }
-                                        })
-                                        .show();
-
-                            }
-                            else
-                            {
-                                updateText(move, whiteScore, blackScore, rowNumber, rows);
-                                updateTheBoard(playerFlag, rowNumber, colNumber, rows);
-                            }
-                        }
-                        else
-                        {
-                            System.out.println("Button: " + rowFin + ", " + colFin);
-                            System.out.println("State: " + board[rowFin][colFin]);
-                            Reversi.State btnState = board[rowFin][colFin];
-                            boolean moved = false;
-                            if (
-                                    btnState == Reversi.State.AV_WHITE && playerFlag ||
-                                            btnState == Reversi.State.AV_BLACK && !playerFlag ||
-                                            btnState == Reversi.State.AV_BOTH)
-                            {
-                                System.out.println("Button is correct");
-                                // looping over up-down directions:
-                                for (int dRow = -1; dRow <= 1; dRow++)
-                                    for (int dCol = -1; dCol <= 1; dCol++) {
-                                        if (dCol != 0 || dRow != 0)
-                                        {
-                                            System.out.println("Checking...");
-                                            //LinkedList<Button> neighbours = new LinkedList<Button>();
-                                            // loop over the rows and cols multiplier:
-                                            for (int mult = 1; mult < 8; mult++) {
-                                                int currRow = rowFin + mult * dRow;
-                                                int currCol = colFin + mult * dCol;
-                                                if (engine.isValidMove(playerFlag, rowNumber, colNumber, board, rowFin, colFin, currRow, currCol)) {
-                                                    //Button current;
-                                                    int tempRow = currRow;
-                                                    int tempCol = currCol;
-                                                    while ((rowFin != tempRow && colFin != tempCol)
-                                                            || (rowFin == currRow && colFin != tempCol)
-                                                            || (rowFin != tempRow && colFin == currCol)) {
-                                                        //current = (Button) rows[tempRow].getChildAt(tempCol);
-                                                        moved = true;
-//                                                        neighbours.add(current);
-                                                        board[tempRow][tempCol] = color;
-                                                        tempRow -= dRow;
-                                                        tempCol -= dCol;
-                                                    }
-
-                                                }
-                                            }
-                                        }
-                                    }
-                            }
-                            if (moved)
-                            {
-                                board[rowFin][colFin] = color;
-//                                System.out.println("B: Changing the player!");
-//                                playerFlag = !playerFlag;
-                                updateText(move, whiteScore, blackScore, rowNumber, rows);
-                                updateTheBoard(!playerFlag, rowNumber, colNumber, rows);
-
-                                CharSequence message = "Thinking...";
-                                Toast thinkToast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT );
-                                thinkToast.show();
-
-                                if(!makeMove(rowFin, colFin, rowNumber, colNumber, rows)) {
-                                    message = "Black has no moves!";
-                                    Toast popup = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
-                                    popup.show();
-                                }
-                                updateText(move, whiteScore, blackScore, rowNumber, rows);
-                                updateTheBoard(playerFlag, rowNumber, colNumber, rows);
-
-                            }
-                        }
-
-                    }
-                });
-
-                */
             }
         }
 

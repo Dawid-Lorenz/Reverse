@@ -32,8 +32,6 @@ public class Players extends AppCompatActivity {
 
     private void updateTheBoard(boolean player, int rowNumber, int colNumber, TableRow[] rows)
     {
-        // TODO possible error in availability!
-
         boolean thereAreNoAvs = true;
 
         int whites = 0;
@@ -47,7 +45,7 @@ public class Players extends AppCompatActivity {
             {
                 ImageButton btn = (ImageButton) rows[row].getChildAt(col);
 
-                if (board[row][col] == null) // == State.EMPTY)
+                if (board[row][col] == null)
                     btn.setImageResource(empty);
                 else if (board[row][col] == State.WHITE)
                 {
@@ -95,123 +93,14 @@ public class Players extends AppCompatActivity {
         }
 
     }
-    /*
-    Is move from button (row1, col1) to (row2, col2) valid
-     */
-    /*
-    private boolean isValidMove(boolean player, int rowNum, int row1, int col1, int row2, int col2)
-    {
-        // TODO may need some refactoring - simplified case now!
-        State state = player ? State.WHITE : State.BLACK;
-//        System.out.println("Move from [" + row1 + ", " + col1 + "] to [" + row2 + ", " + col2 + "] is being checked!");
-//        System.out.println("White color is " + white + ", checked is: " + state);
-        //out of bounds
-        if (row1 >= rowNum || row2 >= rowNum || row1 < 0 || row2 < 0)
-        {
-//            System.out.println("rows out of bounds");
-            return false;
-        }
-        else {
-            int col1Num = 8;
-            int col2Num = 8;
-            if (col1 >= col1Num || col2 >= col2Num || col1 < 0 || col2 < 0)
-            {
-//                System.out.println("cols out of bounds");
-                return false;
-            }
-
-                // the same button
-            else if (row1 == row2 && col1 == col2)
-                return false;
-            else if ((Math.abs(row1 - row2) == Math.abs(col1 - col2)) || ((col1 == col2) || (row1 == row2)))
-            {
-                if ((   State.EMPTY == board[row1][col1] ||
-                        State.AV_BLACK == board[row1][col1] ||
-                        State.AV_WHITE == board[row1][col1] ||
-                        State.AV_BOTH == board[row1][col1]) && state == board[row2][col2])
-                {
-                    int dRow;
-                    State opposite = player ? State.BLACK : State.WHITE;
-                    if (row2 == row1)
-                        dRow = 0;
-                    else
-                        dRow = row2 - row1 > 0 ? 1 : -1;
-                    int dCol;
-                    if (col1 == col2)
-                        dCol = 0;
-                    else
-                        dCol = col2 - col1 > 0 ? 1 : -1;
-                    int currRow = row1 + dRow;
-                    int currCol = col1 + dCol;
-                    State currState;
-                    if (currRow == row2 && currCol == col2) {
-//                        System.out.println("Target neighbours source!");
-                        return false;
-                    }
-                    while ((currRow != row2 && currCol != col2) || (currCol != col2 && row1 == row2)
-                            || (currRow != row2 && col1 == col2)) {
-//                        System.out.println("[" + currRow + ", " + currCol + "]");
-                        currState = board[currRow][currCol];
-//                        System.out.println(currState);
-                        if (opposite != currState) {
-//                            System.out.println("not opposite color");
-                            return false;
-                        }
-
-                        currRow += dRow;
-                        currCol += dCol;
-                    }
-//                    System.out.println("Move from [" + row1 + ", " + col1 + "] to [" + row2 + ", " + col2 + "] is valid");
-                    if (State.EMPTY == board[row1][col1])
-                        board[row1][col1] = player ? State.AV_WHITE : State.AV_BLACK;
-                    else if (State.AV_BLACK == board[row1][col1] && player ||
-                            State.AV_WHITE == board[row1][col1] && !player)
-                        board[row1][col1] = State.AV_BOTH;
-                    return true;
-                }
-            }
-        }
-//        System.out.println("unreachable");
-        //unreachable statement
-        return false;
-    }
-    */
     private boolean hasPossibleMoves(boolean player, int rowNum, TableRow[] rows)
     {
-//        System.out.println("Checking for moves of " + (player ? "white" : "black"));
         boolean hasMoves = false;
 
         for (int row = 0; row < rowNum; row++)
         {
             int colNum = rows[row].getChildCount();
             for (int col = 0; col < colNum; col++) {
-                //System.out.println("Button: [" + row + ", " + col + "]");
-//                boolean thisHasMoves = false;
-
-                /*
-                    // looping over up-down directions:
-                for (int dRow = -1; dRow <= 1; dRow++)
-                    for (int dCol = -1; dCol <= 1; dCol++) {
-                        if (dCol != 0 || dRow != 0)
-                        // loop over the rows and cols multiplier:
-                            for (int mult = 1; mult < 8; mult++) {
-                                int currRow = row + mult*dRow;
-                                int currCol = col + mult*dCol;
-                                //System.out.println("Current button: [" + (row + mult * dRow) + ", " + (col + mult * dCol) + "]");
-                                if (isValidMove(player, rowNum, row, col, currRow, currCol))
-                                {
-//                                        System.out.println("Has moves!");
-//                                    thisHasMoves = true;
-                                    hasMoves = true;
-                                }
-                                else if (currCol > colNum || currRow > rowNum || currCol < 0 || currRow < 0)
-                                    break;
-                            }
-                    }
-
-//                if (!thisHasMoves)
-//                    board[row][col] = State.EMPTY;
-                 */
                 if(player && board[row][col] == State.AV_WHITE)
                     return true;
                 else if(!player && board[row][col] == State.AV_BLACK)
@@ -221,12 +110,6 @@ public class Players extends AppCompatActivity {
         }
         return hasMoves;
     }
-
-    /*
-    ((dCol != 0) || (dRow != 0)) &&
-            ((row + (mult * dRow)) < rowNum) && ((row + (mult * dRow)) >= 0) &&
-            ((col + (mult * dCol)) < colNum) && ((col + (mult * dCol)) >= 0))
-     */
 
     private void updateText(TextView move, TextView whiteScore, TextView blackScore, int rowNum, TableRow[] rows)
     {
@@ -325,7 +208,6 @@ public class Players extends AppCompatActivity {
                             if (
                                 btnState == State.AV_WHITE && playerFlag ||
                                 btnState == State.AV_BLACK && !playerFlag)
-                                //|| btnState == State.AV_BOTH)
                             {
                             System.out.println("Button is correct");
                                 // looping over up-down directions:
@@ -334,7 +216,6 @@ public class Players extends AppCompatActivity {
                                         if (dCol != 0 || dRow != 0)
                                         {
                                             System.out.println("Checking...");
-                                            //LinkedList<Button> neighbours = new LinkedList<Button>();
                                             // loop over the rows and cols multiplier:
                                             for (int mult = 1; mult < 8; mult++) {
                                                 int currRow = rowFin + mult * dRow;
@@ -356,10 +237,6 @@ public class Players extends AppCompatActivity {
 
                                                 }
                                             }
-//                                            moved = moved || !neighbours.isEmpty();
-//                                            for (Button b : neighbours) {
-//                                                System.out.println("Changing colors of neighbour!");
-//                                                b.setBackgroundColor(color);
 //                                            }
                                         }
                                     }
